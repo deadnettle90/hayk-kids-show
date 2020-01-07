@@ -1,18 +1,24 @@
 class KidsController < ApplicationController
   def index
-    @kids = Kid.all
+    kids = Kid.all
 
-    render json: { kids: @kids }
+    render json: kids
   end
 
   def create
-    @kid = Kid.create({
-      username: params[:kid][:username],
-      description: params[:kid][:description],
-      favorite_color: params[:kid][:favorite_color],
-      age: params[:kid][:age],
-    })
-
-    render json: { kid: @kid }
+    kid = Kid.create(kids_params)
+    if kid.save
+      render json: kid
+    else
+      render json: { error: kid.errors.messages }, status: :invalid
+    end
   end
+
+  
+  private
+
+  def kids_params
+    params.require(:kid).permit(:username, :description, :favorite_color, :age)
+  end
+
 end
